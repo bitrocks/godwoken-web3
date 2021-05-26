@@ -46,6 +46,12 @@ function debugLogger(...messages: any[]) {
   }
 }
 
+export function calcEthTxHash(encodedSignedTx: HexString): Hash {
+  const ethTxHash =
+  '0x' + keccak256(Buffer.from(encodedSignedTx.slice(2), 'hex')).toString('hex');
+  return ethTxHash
+}
+
 export async function generateRawTransaction(
   data: HexString,
   rpc: RPC
@@ -53,7 +59,7 @@ export async function generateRawTransaction(
   debugLogger('origin data:', data);
   const polyjuiceTx: PolyjuiceTransaction = decodeRawTransactionData(data);
   debugLogger('decoded polyjuice tx:', polyjuiceTx);
-  const godwokenTx = parseRawTransactionData(polyjuiceTx, rpc);
+  const godwokenTx = await parseRawTransactionData(polyjuiceTx, rpc);
   return godwokenTx;
 }
 
